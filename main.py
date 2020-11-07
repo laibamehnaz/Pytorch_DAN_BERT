@@ -15,10 +15,6 @@ import params
 import train, test
 from transformers import BertModel, BertConfig, BertTokenizer, BertTokenizerFast
 
-src_train_dataloader = utils.get_train_loader('MNIST')
-src_test_dataloader =utils.get_test_loader('MNIST')
-tgt_train_dataloader = utils.get_train_loader('MNIST_M')
-tgt_test_dataloader = utils.get_test_loader('MNIST_M')
 
 ###BERT model instead of the Extractor
 # create the BERTConfig, BERTTokenizer, and BERTModel 
@@ -27,13 +23,21 @@ config = BertConfig.from_pretrained(model_name, output_hidden_states=True)
 tokenizer = BertTokenizerFast.from_pretrained(model_name, do_lower_case=True)
 bert = BertModel.from_pretrained(model_name, config=config)
 
+src_train_dataloader = utils.get_train_loader(tokenizer)
+src_test_dataloader =utils.get_test_loader(tokenizer)
+tgt_train_dataloader = utils.get_train_loader(tokenizer)
+tgt_test_dataloader = utils.get_test_loader(tokenizer)
+
+
 
 common_net = bert
 src_net = BertForSequenceClassification(config, common_net)
 tgt_net = BertForSequenceClassification(config, common_net)
 
+
 src_dataiter = iter(src_train_dataloader)
 tgt_dataiter = iter(tgt_train_dataloader)
+"""
 src_imgs, src_labels = next(src_dataiter)
 tgt_imgs, tgt_labels = next(tgt_dataiter)
 
@@ -42,7 +46,7 @@ tgt_imgs_show = tgt_imgs[:4]
 
 utils.imshow(vutils.make_grid(src_imgs_show))
 utils.imshow(vutils.make_grid(tgt_imgs_show))
-
+"""
 train_hist = {}
 train_hist['Total_loss'] = []
 train_hist['Class_loss'] = []
@@ -57,6 +61,8 @@ if params.use_gpu:
     src_net.cuda()
     tgt_net.cuda()
 
+##To be fixed if needed to visualise
+"""
 src_features = common_net(Variable(src_imgs.expand(src_imgs.shape[0], 3, 28, 28).cuda()))
 tgt_features = common_net(Variable(tgt_imgs.expand(tgt_imgs.shape[0], 3, 28, 28).cuda()))
 src_features = src_features.cpu().data.numpy()
@@ -68,7 +74,7 @@ plt.scatter(src_features[:, 0], src_features[:, 1], color = 'r')
 plt.scatter(tgt_features[:, 0], tgt_features[:, 1], color = 'b')
 plt.title('Non-adapted')
 pylab.show()
-
+"""
 optimizer = optim.SGD([{'params': common_net.parameters()},
                        {'params': src_net.parameters()},
                        {'params': tgt_net.parameters()}], lr= params.lr, momentum= params.momentum)
