@@ -8,6 +8,7 @@ import numpy as np
 import pylab
 import params
 from datasets import load_dataset
+from torch.utils.data import Dataset, DataLoader
 
 def visulize_loss(train_hist):
     x = range(len(train_hist['Total_loss']))
@@ -113,6 +114,7 @@ class SentimentDataset(Dataset):
         return len(self.text)
     
     def __getitem__(self, idx):
+        print(idx)
         text  = self.text[idx]
         target = self.target[idx]
         
@@ -135,7 +137,7 @@ class SentimentDataset(Dataset):
           'targets': torch.tensor(target, dtype=torch.long)
         }
 
-def get_train_loader(dataset,  data_file="./data/twitter/train.csv", tokenizer, ):
+def get_train_loader( data_file, tokenizer):
     """
     Get train dataloader of source domain or target domain
     :return: dataloader
@@ -147,7 +149,7 @@ def get_train_loader(dataset,  data_file="./data/twitter/train.csv", tokenizer, 
     return loader
 
     
-def get_test_loader(dataset, data_file="./data/twitter/train.csv", tokenizer):
+def get_test_loader( data_file, tokenizer):
     """
     Get test dataloader of source domain or target domain
     :return: dataloader
@@ -156,6 +158,6 @@ def get_test_loader(dataset, data_file="./data/twitter/train.csv", tokenizer):
     # first 30% data reserved for validation
     val = load_dataset("csv", data_files=data_file, split='train[:20%]')
     text, target = val['review_text'], val['sentiment']
-    dataset = SentimentDataset(tokenizer=self.tokenizer, text=text, target=target)
-    loader = DataLoader(dataset=dataset, batch_size=self.batch_size, shuffle=True)
+    dataset = SentimentDataset(tokenizer=tokenizer, text=text, target=target)
+    loader = DataLoader(dataset=dataset, batch_size=2, shuffle=True)
     return loader
