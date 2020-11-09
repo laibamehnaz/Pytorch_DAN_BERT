@@ -80,10 +80,6 @@ src_features = common_net(src_input_tensor.cuda())
 tgt_features = common_net(tgt_input_tensor.cuda())
 
 
-print("MODEL OUTPUTS:")
-print(src_features['last_hidden_state'][0].size())
-##Need to look into what the model returns to be able to plot
-
 src_features = src_features['last_hidden_state'][0].cpu().data.numpy()
 tgt_features = tgt_features['last_hidden_state'][0].cpu().data.numpy()
 
@@ -143,10 +139,20 @@ for epoch in range(params.epochs):
     print('Time: {:.4f}s'.format(t1))
     test.test(common_net, src_net, src_test_dataloader, tgt_test_dataloader, epoch, test_hist)
 
-src_features = common_net(Variable(src_imgs.expand(src_imgs.shape[0], 3, 28, 28).cuda()))
-tgt_features = common_net(Variable(tgt_imgs.expand(tgt_imgs.shape[0], 3, 28, 28).cuda()))
-src_features = src_features.cpu().data.numpy()
-tgt_features = tgt_features.cpu().data.numpy()
+#src_features = common_net(Variable(src_imgs.expand(src_imgs.shape[0], 3, 28, 28).cuda()))
+#tgt_features = common_net(Variable(tgt_imgs.expand(tgt_imgs.shape[0], 3, 28, 28).cuda()))
+src_features = common_net(src_input_tensor.cuda())
+tgt_features = common_net(tgt_input_tensor.cuda())
+
+
+#rc_features = src_features.cpu().data.numpy()
+#tgt_features = tgt_features.cpu().data.numpy()
+src_features = src_features['last_hidden_state'][0].cpu().data.numpy()
+tgt_features = tgt_features['last_hidden_state'][0].cpu().data.numpy()
+
+
+#src_features = TSNE(n_components= 2).fit_transform(src_features)
+#tgt_features = TSNE(n_components= 2).fit_transform(tgt_features)
 src_features = TSNE(n_components= 2).fit_transform(src_features)
 tgt_features = TSNE(n_components= 2).fit_transform(tgt_features)
 
