@@ -16,24 +16,51 @@ def train(common_net, src_net, tgt_net, optimizer, criterion, epoch,
     start_steps = epoch * len(source_dataloader)
     total_steps = params.epochs * len(source_dataloader)
 
+    print("Start steps:")
+    print(start_steps)
+    print("Total Steps:")
+    print(total_steps)
+
+
+    
     source_iter = iter(source_dataloader)
     target_iter = iter(target_dataloader)
     
     for batch_idx in range(min(len(source_dataloader), len(target_dataloader))):
         # get data
-        #sdata = next(source_iter)
-        #data = next(target_iter)
-        src_text, src_input_ids, src_attention_mask, src_targets = next(source_iter)
-        tgt_text, tgt_input_ids, tgt_attention_mask, tgt_targets = next(target_iter)
+        
+        #src_text, src_input_ids, src_attention_mask, src_targets = next(source_iter)
+        #tgt_text, tgt_input_ids, tgt_attention_mask, tgt_targets = next(target_iter)
 
+        """Batch iterator getting used up, hence trying this:
+        """
+        try:
+            ##images, targets = next(batch_iterator)
+            src_text, src_input_ids, src_attention_mask, src_targets = next(source_iter)
+            tgt_text, tgt_input_ids, tgt_attention_mask, tgt_targets = next(target_iter)
 
-        input1=next(source_iter)[src_input_ids]
-        attention_mask1=next(source_iter)[ src_attention_mask]
-        label1=next(source_iter)[src_targets]
+            input1=next(source_iter)[src_input_ids]
+            attention_mask1=next(source_iter)[ src_attention_mask]
+            label1=next(source_iter)[src_targets]
 
-        input2= next(target_iter)[tgt_input_ids]
-        attention_mask2=next(target_iter)[tgt_attention_mask]
-        label2=next(target_iter)[tgt_targets]
+            input2= next(target_iter)[tgt_input_ids]
+            attention_mask2=next(target_iter)[tgt_attention_mask]
+            label2=next(target_iter)[tgt_targets]            
+
+        except StopIteration:
+            source_iter = iter(source_dataloader)
+            target_iter = iter(target_dataloader)
+            src_text, src_input_ids, src_attention_mask, src_targets = next(source_iter)
+            tgt_text, tgt_input_ids, tgt_attention_mask, tgt_targets = next(target_iter)
+            #batch_iterator = iter(data_loader)
+            #mages, targets = next(batch_iterator)
+            input1=next(source_iter)[src_input_ids]
+            attention_mask1=next(source_iter)[ src_attention_mask]
+            label1=next(source_iter)[src_targets]
+
+            input2= next(target_iter)[tgt_input_ids]
+            attention_mask2=next(target_iter)[tgt_attention_mask]
+            label2=next(target_iter)[tgt_targets]
 
         # prepare the data
         
