@@ -114,8 +114,8 @@ class SentimentDataset(Dataset):
         return len(self.text)
     
     def __getitem__(self, idx):
-        print(idx)
         text  = self.text[idx]
+        
         target = self.target[idx]
         
         # encode the text and target into tensors return the attention masks as well
@@ -145,7 +145,7 @@ def get_train_loader( data_file, tokenizer):
     train = load_dataset("csv", data_files=data_file, split='train[20%:]')
     text, target = train['review_text'], train['sentiment']
     dataset = SentimentDataset(tokenizer=tokenizer, text=text, target=target)
-    loader = DataLoader(dataset=dataset, batch_size=2, shuffle=True)
+    loader = DataLoader(dataset=dataset, batch_size=2, shuffle=False)
     return loader
 
     
@@ -159,5 +159,5 @@ def get_test_loader( data_file, tokenizer):
     val = load_dataset("csv", data_files=data_file, split='train[:20%]')
     text, target = val['review_text'], val['sentiment']
     dataset = SentimentDataset(tokenizer=tokenizer, text=text, target=target)
-    loader = DataLoader(dataset=dataset, batch_size=2, shuffle=True)
+    loader = DataLoader(dataset=dataset, batch_size=2, shuffle=False)
     return loader
